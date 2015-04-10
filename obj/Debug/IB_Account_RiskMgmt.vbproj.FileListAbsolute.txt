@@ -1,0 +1,15 @@
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\bin\Debug\IB_Account_RiskMgmt.exe.config
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\bin\Debug\IB_Account_RiskMgmt.exe
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\bin\Debug\IB_Account_RiskMgmt.pdb
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\bin\Debug\IB_Account_RiskMgmt.xml
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\bin\Debug\Interop.TWSLib.dll
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\bin\Debug\AxInterop.TWSLib.dll
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\Interop.TWSLib.dll
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\AxInterop.TWSLib.dll
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.vbproj.ResolveComReference.cache
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.frmMain.resources
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.Resources.resources
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.vbproj.GenerateResource.Cache
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.exe
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.xml
+c:\users\ssg\documents\visual studio 2012\Projects\IB_Account_RiskMgmt\IB_Account_RiskMgmt\obj\Debug\IB_Account_RiskMgmt.pdb
