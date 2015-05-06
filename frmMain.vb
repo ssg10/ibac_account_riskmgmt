@@ -11,17 +11,27 @@ Public Class frmMain
     Dim g_is_accsummary_api_called As Boolean = False
     Dim g_dump_daily_data_once As Boolean = False
     Dim g_write_once_per_run As Boolean = True
-    'Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 PM#
-    'Dim MARKET_OPEN_TIME As DateTime = #6:30:00 AM#
+    Dim g_write_daily_data_once As Boolean = False
+    Dim g_starting_equity As Double = 0
+
+    Dim MARKET_OPEN_TIME As DateTime = #6:30:00 AM#
+    Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 PM#
+    
+    ' Dim g_returned_calendar_date As DateTime
 
     'For test
-    Dim MARKET_CLOSE_TIME As DateTime = #2:00:00 AM#
-    Dim MARKET_OPEN_TIME As DateTime = #12:30:00 AM#
+    'Dim MARKET_OPEN_TIME As DateTime = #12:00:00 AM#
+    'Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 AM#
+
 
     Dim IBCONNECTION_NUMBER As Integer = 69 ' Must be unique number or IB will not connect us
     Dim IB_ACC_SUMMARY_REQID As Integer = 1
 
     Dim dtAccEquity As New DataTable("dtAccEquity")
+    Dim dtDailyAccEquity As New DataTable("dtDailyAccEquity") ' DataTable for temporary streamread daily data file
+    Dim dtPctAccEquity As New DataTable("dtPctAccEquity")     ' DataTable for storing percent equity change
+
+    ' Dim fileNameAndPath As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\SomeFile.txt"
 
     Private Sub AxTws1_errMsg(sender As Object, e As AxTWSLib._DTwsEvents_errMsgEvent) Handles AxTws1.errMsg
         lbErrorAndLog.Items.Add(Now.ToString & ":  " & e.errorMsg)
@@ -39,6 +49,9 @@ Public Class frmMain
                 lblConnected.Text = "CONNECTED"
                 lblConnected.BackColor = Color.Green
                 Call AxTws1.reqCurrentTime()
+
+                btnConnect.Enabled = False
+                btnDisconnect.Enabled = True
             End If
 
             ' Just a flag to let this if then executed once
@@ -57,6 +70,9 @@ Public Class frmMain
         Call AxTws1.disconnect()
         lblConnected.Text = "DISCONNECTED"
         lblConnected.BackColor = Color.Red
+
+        btnConnect.Enabled = True
+        btnDisconnect.Enabled = False
     End Sub
 
     Private Sub btnStartAccSummary_Click(sender As Object, e As EventArgs) Handles btnStartAccSummary.Click
@@ -106,10 +122,8 @@ Public Class frmMain
                 g_sec_when_data_collected = TimeOfDay.Second
                 g_min_when_data_collected = TimeOfDay.Minute
 
-
                 Call AxTws1.reqAccountSummary(IB_ACC_SUMMARY_REQID, "All", "NetLiquidation")
                 g_is_accsummary_api_called = True
-
             Else
                 Console.WriteLine(TimeOfDay & " " & g_min_when_data_collected & " " & g_sec_when_data_collected & " Else if not mod 1")
                 ' add flag so that it is called only if api has been called once
@@ -129,12 +143,14 @@ Public Class frmMain
         End If
 
         '----- If now is after market hours by a bit, then we collect the end of day account data
-        If (TimeOfDay > MARKET_CLOSE_TIME) And (TimeOfDay < MARKET_CLOSE_TIME.AddMinutes(3)) And Not g_dump_daily_data_once Then
+        '      g_dump_Daily_data_once is to make sure reqAccountSummary is called once
+        '      g_write_daily_data_once is to make sure the accountsummary event is processed once, since there is a chance it triggers more than 1 event for 1 req call
+        If (TimeOfDay > MARKET_CLOSE_TIME.AddMinutes(1)) And (TimeOfDay < MARKET_CLOSE_TIME.AddMinutes(5)) And Not g_dump_daily_data_once Then
 
             Console.WriteLine(Now & " Write EOD data")
 
             Call AxTws1.reqAccountSummary(IB_ACC_SUMMARY_REQID, "All", "NetLiquidation")  'assume data req comes back faster than timer fires (1 sec or so)
-
+            g_write_daily_data_once = True
         ElseIf (TimeOfDay > MARKET_CLOSE_TIME.AddMinutes(15)) And (TimeOfDay < MARKET_CLOSE_TIME.AddMinutes(30)) Then
 
             ' Reset the flag so that next day's closing price can be recorded again (anytime between 1:00pm to 1:15pm, hit once using flag)
@@ -164,27 +180,66 @@ Public Class frmMain
                             lbData.Items.Add(Now.ToString & "," & g_accounts(0) & "," & e.value)
                             lbData.TopIndex = lbData.Items.Count - 1
 
+                            'Set up chart and plot
+                            With chtEquity.ChartAreas(0)
+                                .AxisY.Minimum = e.value - 200
+                                .AxisY.Maximum = e.value + 200
+                            End With
+
                             dtAccEquity.Rows.Add({Now.ToString, e.value})  ' Parms take array
                             DataGridView1.DataSource = dtAccEquity.DefaultView
-
                             chtEquity.Series(0).Points.Clear()
-
                             chtEquity.DataSource = ""
-
                             chtEquity.ResetAutoValues()
                             chtEquity.DataSource = dtAccEquity
                             chtEquity.DataBind()
 
                             With chtEquity.Series(0)
                                 .Points.Clear()
-
                                 .Points.DataBind(dtAccEquity.DefaultView, "DateTime", "NetLiquidity", Nothing)
                                 '.XValueMember = "<DateTime>"
                                 '.YValueMembers = "<NetLiquidity>"
                                 .ChartType = DataVisualization.Charting.SeriesChartType.Line
+                                .BorderWidth = 3
+                                .BorderColor = Color.Black
                             End With
 
                             chtEquity.ResetAutoValues()
+
+                            'Update percent pnl label
+                            Dim pnl_pct As Decimal = ((e.value - g_starting_equity) / g_starting_equity) * 100
+                            lblDayPct.Text = pnl_pct.ToString("N2")
+                            If pnl_pct < 0 Then
+                                lblDayPct.ForeColor = Color.Red
+                            Else
+                                lblDayPct.ForeColor = Color.Green
+                            End If
+
+                            'Plot it on percent chart
+                            With chtPctEquity.ChartAreas(0)
+                                .AxisY.LabelStyle.Format = "{0:0.00}"
+                                .AxisY.Minimum = pnl_pct - 10
+                                .AxisY.Maximum = pnl_pct + 10
+                            End With
+
+                            dtPctAccEquity.Rows.Add({Now.ToString, pnl_pct.ToString("N2")})
+                            dgPercent.DataSource = dtPctAccEquity.DefaultView
+
+                            chtPctEquity.Series(0).Points.Clear()
+                            chtPctEquity.DataSource = ""
+                            chtPctEquity.ResetAutoValues()
+                            chtPctEquity.DataSource = dtPctAccEquity
+                            chtPctEquity.DataBind()
+
+
+                            With chtPctEquity.Series(0)
+                                .Points.Clear()
+                                .Points.DataBind(dtPctAccEquity.DefaultView, "DateTime", "PctPnl", Nothing)
+                                .ChartType = DataVisualization.Charting.SeriesChartType.Line
+                                .BorderWidth = 3
+                                .BorderColor = Color.Black
+                            End With
+                            chtPctEquity.ResetAutoValues()
 
                         End If
                     End If
@@ -206,7 +261,7 @@ Public Class frmMain
             End If '==== If TimeOfDay > MARKET_OPEN_TIME Then
 
             '----- If now is after market hours by a bit, then we collect the end of day account data
-            If (TimeOfDay > MARKET_CLOSE_TIME) And (TimeOfDay < MARKET_CLOSE_TIME.AddMinutes(3)) Then
+            If (TimeOfDay > MARKET_CLOSE_TIME.AddMinutes(1)) And (TimeOfDay < MARKET_CLOSE_TIME.AddMinutes(3)) And (g_write_daily_data_once) Then
 
                 If e.account = g_accounts(0) Then
                     ' Write file for first account
@@ -231,7 +286,7 @@ Public Class frmMain
                 Console.WriteLine(Now.ToString & " " & g_dump_daily_data_once & "  Market close and collect data")
                 ' set flag back so that timer next fire wont call reqAccountSummary again
                 g_dump_daily_data_once = True
-
+                g_write_daily_data_once = False
                 Call AxTws1.cancelAccountSummary(IB_ACC_SUMMARY_REQID)
 
             End If
@@ -298,32 +353,30 @@ Public Class frmMain
                 Console.WriteLine(TimeOfDay & " write file")
 
                 AxTws1.reqAccountUpdates(1, g_accounts(0))
-
-
-
             End If
 
         End If
     End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Sub btnIntradayChart_Click(sender As Object, e As EventArgs) Handles btnIntradayChart.Click
+        Dim dtTempEquity As New DataTable("dtTempEquity")
 
         Dim file As String = "c:\" & g_accounts(0) & "acc_equity_5min.csv"
 
-        Try 'file might throw exception if not exist
+        dtTempEquity.Columns.Add("DateTime")
+        dtTempEquity.Columns.Add("NetLiquidity")
 
-
+        Try 'file might throw exception if not exist among other exceptions
             chtEquity.Series(0).Points.Clear()
 
             chtEquity.DataSource = ""
 
-            dtAccEquity.Clear()
+            'dtAccEquity.Clear()
 
             Using sr As StreamReader = New StreamReader(file)
-
                 While Not sr.EndOfStream
                     Dim dataSplits As String() = sr.ReadLine.Split(",")
-                    dtAccEquity.Rows.Add(dataSplits)
+                    dtTempEquity.Rows.Add(dataSplits)
                 End While
             End Using
 
@@ -340,11 +393,11 @@ Public Class frmMain
                 '.XValueMember = "<DateTime>"
                 '.YValueMembers = "<NetLiquidity>"
                 .ChartType = DataVisualization.Charting.SeriesChartType.Line
+                .BorderWidth = 3
+                .BorderColor = Color.Black
             End With
 
             chtEquity.ResetAutoValues()
-
-
         Catch ex As Exception
             MessageBox.Show(ex.ToString)
 
@@ -354,25 +407,50 @@ Public Class frmMain
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'Init datagridview control
+        'Init datatables
         dtAccEquity.Columns.Add("DateTime")
         dtAccEquity.Columns.Add("NetLiquidity")
+        dtDailyAccEquity.Columns.Add("DateTime")
+        dtDailyAccEquity.Columns.Add("NetLiquidity")
+        dtPctAccEquity.Columns.Add("DateTime")
+        dtPctAccEquity.Columns.Add("PctPnl")
+
+        'Set first percent as 0 at first row
+        dtPctAccEquity.Rows.Add({Now.ToString, 0})
 
         chtEquity.Series.Clear()
+        chtPctEquity.Series.Clear()
 
         'Create chart
         chtEquity.Series.Add("AccEquity")
         chtEquity.Name = "AccEquity"
+        chtPctEquity.Series.Add("PctPnl")
+        chtPctEquity.Name = "PctPnl"
 
         With chtEquity.ChartAreas(0)
             .AxisX.Title = "Date"
-            .AxisY.Title = "Units"
-            .AxisY.Minimum = 8000
-            .AxisY.Maximum = 15000
+            .AxisY.Title = "$ Equity"
         End With
 
+        With chtPctEquity.ChartAreas(0)
+            .AxisX.Title = "Date"
+            .AxisY.Title = "P&&L %"
+        End With
+
+        'Show first index as default view
         cbDaysinchart.SelectedIndex = 0
 
+        'Gray out disconnect button
+        btnDisconnect.Enabled = False
+
+        'Find the last row in daily equity datatable and display on label
+        If ReadDailyEquityFile() = 0 Then ' 0 = no error
+            g_starting_equity = dtDailyAccEquity.Rows(dtDailyAccEquity.Rows.Count - 1).Item("NetLiquidity")
+
+            lblStartingEquity.Text = g_starting_equity.ToString
+        End If
+
+        txtEndDate.Text = Now.Date
     End Sub
 
     Private Sub AxTws1_accountDownloadEnd(sender As Object, e As AxTWSLib._DTwsEvents_accountDownloadEndEvent) Handles AxTws1.accountDownloadEnd
@@ -384,4 +462,57 @@ Public Class frmMain
         cbDaysinchart.SelectedItem = 0
 
     End Sub
+
+    Private Sub btnStartDate_Click(sender As Object, e As EventArgs) Handles btnStartDate.Click
+        calendar.ShowDialog()
+
+        If calendar.ok() Then
+            txtStartDate.Text = calendar.selected_date()
+        End If
+
+    End Sub
+
+    Private Sub btnEndDate_Click(sender As Object, e As EventArgs) Handles btnEndDate.Click
+        calendar.ShowDialog()
+
+        If calendar.ok Then
+            txtEndDate.Text = calendar.selected_date()
+        End If
+    End Sub
+
+    Private Sub btnOpenChart_Click(sender As Object, e As EventArgs) Handles btnOpenChart.Click
+        frmHistoricalChart.chart_timeframe = "intraday"
+        frmHistoricalChart.Show()
+
+    End Sub
+
+
+    Private Sub btnDailyChart_Click(sender As Object, e As EventArgs) Handles btnDailyChart.Click
+        frmHistoricalChart.chart_timeframe = "daily"
+        frmHistoricalChart.Show()
+    End Sub
+
+    Private Function ReadDailyEquityFile() As Integer
+        '@ Read daily equity file (acc_equity_daily.csv) and load it to table for use later
+        '@ Return:  dtDailyAccEquity
+
+        Dim file As String = "c:\" & g_accounts(0) & "acc_equity_daily.csv"
+
+        Try
+            'RELoad daily equity data file and load it to datatable
+            dtDailyAccEquity.Clear()
+
+            Using sr As StreamReader = New StreamReader(file)
+                While Not sr.EndOfStream
+                    Dim dataSplits As String() = sr.ReadLine.Split(",")
+                    dtDailyAccEquity.Rows.Add(dataSplits)
+                End While
+            End Using
+            ReadDailyEquityFile = 0
+        Catch ex As Exception
+            MessageBox.Show(ex.ToString)
+            ReadDailyEquityFile = -1
+        End Try
+
+    End Function
 End Class
