@@ -13,18 +13,21 @@ Public Class frmMain
     Dim g_write_once_per_run As Boolean = True
     Dim g_write_daily_data_once As Boolean = False
     Dim g_starting_equity As Double = 0
+    Public g_pct_equity_up_threshold_alert As Decimal = 10
+    Dim g_pct_equity_down_threshold_alert As Decimal = 10
 
-    Dim MARKET_OPEN_TIME As DateTime = #6:30:00 AM#
-    Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 PM#
+
+    'Dim MARKET_OPEN_TIME As DateTime = #6:30:00 AM#
+    'Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 PM#
     
     ' Dim g_returned_calendar_date As DateTime
 
     'For test
-    'Dim MARKET_OPEN_TIME As DateTime = #12:00:00 AM#
-    'Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 AM#
+    Dim MARKET_OPEN_TIME As DateTime = #11:00:00 PM#
+    Dim MARKET_CLOSE_TIME As DateTime = #11:59:00 PM#
 
 
-    Dim IBCONNECTION_NUMBER As Integer = 69 ' Must be unique number or IB will not connect us
+    Dim IBCONNECTION_NUMBER As Integer = 7 ' Must be unique number or IB will not connect us
     Dim IB_ACC_SUMMARY_REQID As Integer = 1
 
     Dim dtAccEquity As New DataTable("dtAccEquity")
@@ -37,6 +40,7 @@ Public Class frmMain
         lbErrorAndLog.Items.Add(Now.ToString & ":  " & e.errorMsg)
         lbErrorAndLog.TopIndex = lbErrorAndLog.Items.Count - 1
 
+        Console.WriteLine("Errormsg: " & e.errorMsg)
 
         'Check if marketdata farm is recoqnized, then connection is good
         Dim connection_msg As String
@@ -62,8 +66,16 @@ Public Class frmMain
     Private Sub btnConnect_Click(sender As Object, e As EventArgs) Handles btnConnect.Click
         g_connecting_inprogress = True
         Call AxTws1.connect("", "7496", IBCONNECTION_NUMBER)
-        'Wait for errMsg event with "Market data farm ", if string contains that, connection is good
 
+        'code below, because TWS does not return market data farm status anymore!!!!!!!!!!!!!
+        'Wait for errMsg event with "Market data farm ", if string contains that, connection is good
+        'btnConnect.Enabled = False
+        'btnDisconnect.Enabled = True
+        'lblConnected.Text = "CONNECTED"
+        'lblConnected.BackColor = Color.Green
+        'Call AxTws1.reqCurrentTime()
+        ' Just a flag to let this if then executed once
+        'g_connecting_inprogress = False
     End Sub
 
     Private Sub btnDisconnect_Click(sender As Object, e As EventArgs) Handles btnDisconnect.Click
@@ -80,9 +92,17 @@ Public Class frmMain
         If String.Compare(lblConnected.Text, "CONNECTED") = 0 Then  '0 means equal
             If Not g_is_acc_summary_subscribed Then
                 tmrCollectAccSummary.Start()
-                'Call AxTws1.reqAccountSummary(IB_ACC_SUMMARY_REQID, "All", "AccruedCash,BuyingPower,NetLiquidation")
+
                 g_is_acc_summary_subscribed = True
                 btnStartAccSummary.Text = "Stop Acc Summary"
+
+                'Pre-populate datatable for chart depending on user selection of num of days to see on chart
+                Dim ret As Decimal = PopulateEquityDataTable(CDec(cbDaysinchart.Text))
+                If ret < 0 Then
+                    lbErrorAndLog.Items.Add("Error when populating dtAccEquity for chart")
+                    lbErrorAndLog.TopIndex = lbErrorAndLog.Items.Count - 1
+                End If
+
             Else
                 tmrCollectAccSummary.Stop()
                 AxTws1.cancelAccountSummary(IB_ACC_SUMMARY_REQID)
@@ -241,6 +261,16 @@ Public Class frmMain
                             End With
                             chtPctEquity.ResetAutoValues()
 
+                            'Check if pnl pct is higher than threshold to show alert or even close all
+                            If pnl_pct > frmSettings.pct_equity_up_threshold_alert Then
+                                lblWarning.ForeColor = Color.Red
+                                lblWarning.Text = "YOUR TODAY'S GAIN IS OVER " & frmSettings.pct_equity_up_threshold_alert.ToString &
+                                    "THRESHOLD. TAKE PROFIT. "
+                            ElseIf pnl_pct < frmSettings.pct_equity_down_threshold_alert Then
+                                lblWarning.ForeColor = Color.Red
+                                lblWarning.Text = "YOUR TODAY'S LOSS EXCEEDS " & frmSettings.pct_equity_up_threshold_alert.ToString &
+                                    "THRESHOLD. CLOSE HALF OR ALL. "
+                            End If
                         End If
                     End If
 
@@ -406,6 +436,7 @@ Public Class frmMain
     End Sub
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        lblWarning.Text = Now.Date
 
         'Init datatables
         dtAccEquity.Columns.Add("DateTime")
@@ -438,7 +469,7 @@ Public Class frmMain
         End With
 
         'Show first index as default view
-        cbDaysinchart.SelectedIndex = 0
+        cbDaysinchart.SelectedIndex = 1
 
         'Gray out disconnect button
         btnDisconnect.Enabled = False
@@ -459,7 +490,8 @@ Public Class frmMain
 
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        cbDaysinchart.SelectedItem = 0
+        AxTws1.reqCurrentTime()
+
 
     End Sub
 
@@ -515,4 +547,71 @@ Public Class frmMain
         End Try
 
     End Function
+
+
+    Private Sub menuSetting_Click(sender As Object, e As EventArgs) Handles menuSetting.Click
+        frmSettings.ShowDialog()
+
+    End Sub
+
+    Sub PlayWarningSound(warningtype As String)
+
+        Select Case warningtype
+
+            Case "up"
+                My.Computer.Audio.Play("C:\dailyprofithit.wav",
+                    AudioPlayMode.WaitToComplete)
+            Case "down"
+                My.Computer.Audio.Play("C:\dailystopexceeds.wav",
+                    AudioPlayMode.WaitToComplete)
+
+        End Select
+
+        My.Computer.Audio.Stop()
+
+    End Sub
+
+    Sub PlayAsteriskSound()
+        My.Computer.Audio.PlaySystemSound(
+            System.Media.SystemSounds.Asterisk)
+    End Sub
+
+    Private Sub AxTws1_currentTime(sender As Object, e As AxTWSLib._DTwsEvents_currentTimeEvent) Handles AxTws1.currentTime
+
+    End Sub
+
+    Private Function PopulateEquityDataTable(num_days As Decimal) As Integer
+
+        Dim file As String = "c:\" & g_accounts(0) & "acc_equity_5min.csv"
+        Dim days As Integer = num_days - 1  ' if user asks 2 days, meaning we will load 1 prev day worth of data
+        Dim furthest_backdate As Date = Now
+
+        furthest_backdate = furthest_backdate.AddDays(-1 * days)
+        Console.WriteLine("PopulateEquityDataTable: furthest day back = " & furthest_backdate.Date)
+
+        Try
+            '!!!! CLEAR DATATABLE !!!!!!!
+            dtAccEquity.Clear()
+
+            Using sr As StreamReader = New StreamReader(file)
+                While Not sr.EndOfStream
+                    Dim dataSplits As String() = sr.ReadLine.Split(",")
+
+                    'Only add num_days before
+                    If DateTime.Compare(CDate(dataSplits(0)), furthest_backdate) >= 0 Then
+                        dtAccEquity.Rows.Add(dataSplits)
+                    End If
+
+                End While
+            End Using
+        Catch ex As Exception
+
+            MessageBox.Show(ex.ToString)
+            'Return error
+            PopulateEquityDataTable = -1
+        End Try
+
+        PopulateEquityDataTable = 0
+    End Function
+
 End Class

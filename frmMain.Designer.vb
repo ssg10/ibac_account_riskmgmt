@@ -23,14 +23,13 @@ Partial Class frmMain
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
         Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
         Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Me.AxTws1 = New AxTWSLib.AxTws()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Me.lbErrorAndLog = New System.Windows.Forms.ListBox()
         Me.lblConnected = New System.Windows.Forms.Label()
         Me.btnConnect = New System.Windows.Forms.Button()
@@ -66,23 +65,21 @@ Partial Class frmMain
         Me.Label4 = New System.Windows.Forms.Label()
         Me.lblDayPct = New System.Windows.Forms.Label()
         Me.dgPercent = New System.Windows.Forms.DataGridView()
-        CType(Me.AxTws1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
+        Me.menuSetting = New System.Windows.Forms.ToolStripMenuItem()
+        Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AxTws1 = New AxTWSLib.AxTws()
+        Me.lblWarning = New System.Windows.Forms.Label()
         CType(Me.chtEquity, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dsAccountBalance, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AccountNetLiq, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chtPctEquity, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgPercent, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.MenuStrip1.SuspendLayout()
+        CType(Me.AxTws1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'AxTws1
-        '
-        Me.AxTws1.Enabled = True
-        Me.AxTws1.Location = New System.Drawing.Point(974, 631)
-        Me.AxTws1.Name = "AxTws1"
-        Me.AxTws1.OcxState = CType(resources.GetObject("AxTws1.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.AxTws1.Size = New System.Drawing.Size(100, 50)
-        Me.AxTws1.TabIndex = 0
         '
         'lbErrorAndLog
         '
@@ -97,7 +94,7 @@ Partial Class frmMain
         '
         Me.lblConnected.AutoSize = True
         Me.lblConnected.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblConnected.Location = New System.Drawing.Point(322, 13)
+        Me.lblConnected.Location = New System.Drawing.Point(309, 38)
         Me.lblConnected.Name = "lblConnected"
         Me.lblConnected.Size = New System.Drawing.Size(189, 24)
         Me.lblConnected.TabIndex = 2
@@ -105,18 +102,18 @@ Partial Class frmMain
         '
         'btnConnect
         '
-        Me.btnConnect.Location = New System.Drawing.Point(12, 3)
+        Me.btnConnect.Location = New System.Drawing.Point(12, 33)
         Me.btnConnect.Name = "btnConnect"
-        Me.btnConnect.Size = New System.Drawing.Size(133, 37)
+        Me.btnConnect.Size = New System.Drawing.Size(116, 29)
         Me.btnConnect.TabIndex = 3
         Me.btnConnect.Text = "Connect to IB"
         Me.btnConnect.UseVisualStyleBackColor = True
         '
         'btnDisconnect
         '
-        Me.btnDisconnect.Location = New System.Drawing.Point(164, 3)
+        Me.btnDisconnect.Location = New System.Drawing.Point(155, 36)
         Me.btnDisconnect.Name = "btnDisconnect"
-        Me.btnDisconnect.Size = New System.Drawing.Size(136, 37)
+        Me.btnDisconnect.Size = New System.Drawing.Size(115, 27)
         Me.btnDisconnect.TabIndex = 4
         Me.btnDisconnect.Text = "Disconnect"
         Me.btnDisconnect.UseVisualStyleBackColor = True
@@ -128,7 +125,7 @@ Partial Class frmMain
         Legend1.Enabled = False
         Legend1.Name = "Legend1"
         Me.chtEquity.Legends.Add(Legend1)
-        Me.chtEquity.Location = New System.Drawing.Point(3, 107)
+        Me.chtEquity.Location = New System.Drawing.Point(0, 127)
         Me.chtEquity.Name = "chtEquity"
         Series1.ChartArea = "ChartArea1"
         Series1.Legend = "Legend1"
@@ -204,7 +201,7 @@ Partial Class frmMain
         '
         'btnIntradayChart
         '
-        Me.btnIntradayChart.Location = New System.Drawing.Point(739, 573)
+        Me.btnIntradayChart.Location = New System.Drawing.Point(762, 613)
         Me.btnIntradayChart.Name = "btnIntradayChart"
         Me.btnIntradayChart.Size = New System.Drawing.Size(86, 23)
         Me.btnIntradayChart.TabIndex = 10
@@ -241,7 +238,7 @@ Partial Class frmMain
         '
         'btnStartDate
         '
-        Me.btnStartDate.Location = New System.Drawing.Point(739, 546)
+        Me.btnStartDate.Location = New System.Drawing.Point(762, 586)
         Me.btnStartDate.Name = "btnStartDate"
         Me.btnStartDate.Size = New System.Drawing.Size(85, 23)
         Me.btnStartDate.TabIndex = 14
@@ -250,21 +247,21 @@ Partial Class frmMain
         '
         'txtStartDate
         '
-        Me.txtStartDate.Location = New System.Drawing.Point(739, 520)
+        Me.txtStartDate.Location = New System.Drawing.Point(762, 560)
         Me.txtStartDate.Name = "txtStartDate"
         Me.txtStartDate.Size = New System.Drawing.Size(85, 20)
         Me.txtStartDate.TabIndex = 15
         '
         'txtEndDate
         '
-        Me.txtEndDate.Location = New System.Drawing.Point(845, 520)
+        Me.txtEndDate.Location = New System.Drawing.Point(868, 560)
         Me.txtEndDate.Name = "txtEndDate"
         Me.txtEndDate.Size = New System.Drawing.Size(86, 20)
         Me.txtEndDate.TabIndex = 16
         '
         'btnEndDate
         '
-        Me.btnEndDate.Location = New System.Drawing.Point(845, 546)
+        Me.btnEndDate.Location = New System.Drawing.Point(868, 586)
         Me.btnEndDate.Name = "btnEndDate"
         Me.btnEndDate.Size = New System.Drawing.Size(86, 23)
         Me.btnEndDate.TabIndex = 17
@@ -283,7 +280,7 @@ Partial Class frmMain
         '
         'RectangleShape1
         '
-        Me.RectangleShape1.Location = New System.Drawing.Point(732, 506)
+        Me.RectangleShape1.Location = New System.Drawing.Point(742, 548)
         Me.RectangleShape1.Name = "RectangleShape1"
         Me.RectangleShape1.Size = New System.Drawing.Size(221, 104)
         '
@@ -298,7 +295,7 @@ Partial Class frmMain
         '
         'btnDailyChart
         '
-        Me.btnDailyChart.Location = New System.Drawing.Point(845, 573)
+        Me.btnDailyChart.Location = New System.Drawing.Point(868, 613)
         Me.btnDailyChart.Name = "btnDailyChart"
         Me.btnDailyChart.Size = New System.Drawing.Size(85, 23)
         Me.btnDailyChart.TabIndex = 20
@@ -312,7 +309,7 @@ Partial Class frmMain
         Legend2.Enabled = False
         Legend2.Name = "Legend1"
         Me.chtPctEquity.Legends.Add(Legend2)
-        Me.chtPctEquity.Location = New System.Drawing.Point(739, 167)
+        Me.chtPctEquity.Location = New System.Drawing.Point(770, 163)
         Me.chtPctEquity.Name = "chtPctEquity"
         Series2.ChartArea = "ChartArea1"
         Series2.Legend = "Legend1"
@@ -380,11 +377,61 @@ Partial Class frmMain
         Me.dgPercent.Size = New System.Drawing.Size(121, 95)
         Me.dgPercent.TabIndex = 27
         '
+        'MenuStrip1
+        '
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.menuSetting, Me.HelpToolStripMenuItem})
+        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
+        Me.MenuStrip1.Name = "MenuStrip1"
+        Me.MenuStrip1.Size = New System.Drawing.Size(1182, 24)
+        Me.MenuStrip1.TabIndex = 28
+        Me.MenuStrip1.Text = "MenuStrip1"
+        '
+        'menuSetting
+        '
+        Me.menuSetting.Name = "menuSetting"
+        Me.menuSetting.Size = New System.Drawing.Size(56, 20)
+        Me.menuSetting.Text = "Setting"
+        '
+        'HelpToolStripMenuItem
+        '
+        Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AboutToolStripMenuItem})
+        Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
+        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
+        Me.HelpToolStripMenuItem.Text = "Help"
+        '
+        'AboutToolStripMenuItem
+        '
+        Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(107, 22)
+        Me.AboutToolStripMenuItem.Text = "About"
+        '
+        'AxTws1
+        '
+        Me.AxTws1.Enabled = True
+        Me.AxTws1.Location = New System.Drawing.Point(553, 519)
+        Me.AxTws1.Name = "AxTws1"
+        Me.AxTws1.OcxState = CType(resources.GetObject("AxTws1.OcxState"), System.Windows.Forms.AxHost.State)
+        Me.AxTws1.Size = New System.Drawing.Size(100, 50)
+        Me.AxTws1.TabIndex = 29
+        Me.AxTws1.Visible = False
+        '
+        'lblWarning
+        '
+        Me.lblWarning.AutoSize = True
+        Me.lblWarning.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblWarning.Location = New System.Drawing.Point(12, 76)
+        Me.lblWarning.Name = "lblWarning"
+        Me.lblWarning.Size = New System.Drawing.Size(200, 31)
+        Me.lblWarning.TabIndex = 30
+        Me.lblWarning.Text = "Label Warning"
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1182, 693)
+        Me.Controls.Add(Me.lblWarning)
+        Me.Controls.Add(Me.AxTws1)
         Me.Controls.Add(Me.dgPercent)
         Me.Controls.Add(Me.lblDayPct)
         Me.Controls.Add(Me.Label4)
@@ -411,23 +458,25 @@ Partial Class frmMain
         Me.Controls.Add(Me.btnConnect)
         Me.Controls.Add(Me.lblConnected)
         Me.Controls.Add(Me.lbErrorAndLog)
-        Me.Controls.Add(Me.AxTws1)
+        Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.ShapeContainer1)
+        Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "IBac - IB Account Risk Management"
-        CType(Me.AxTws1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chtEquity, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dsAccountBalance, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.AccountNetLiq, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chtPctEquity, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgPercent, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.MenuStrip1.ResumeLayout(False)
+        Me.MenuStrip1.PerformLayout()
+        CType(Me.AxTws1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents AxTws1 As AxTWSLib.AxTws
     Friend WithEvents lbErrorAndLog As System.Windows.Forms.ListBox
     Friend WithEvents lblConnected As System.Windows.Forms.Label
     Friend WithEvents btnConnect As System.Windows.Forms.Button
@@ -463,5 +512,11 @@ Partial Class frmMain
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents lblDayPct As System.Windows.Forms.Label
     Friend WithEvents dgPercent As System.Windows.Forms.DataGridView
+    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents AxTws1 As AxTWSLib.AxTws
+    Friend WithEvents menuSetting As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents HelpToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents AboutToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents lblWarning As System.Windows.Forms.Label
 
 End Class

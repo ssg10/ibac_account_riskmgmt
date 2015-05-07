@@ -78,6 +78,12 @@
     <Compile Include="calendar.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Settings.Designer.vb">
+      <DependentUpon>Settings.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmHistoricalChart.Designer.vb">
       <DependentUpon>frmHistoricalChart.vb</DependentUpon>
     </Compile>
@@ -122,6 +128,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings.resx">
+      <DependentUpon>Settings.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
