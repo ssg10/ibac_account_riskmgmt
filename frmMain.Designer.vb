@@ -49,7 +49,7 @@ Partial Class frmMain
         Me.btnIntradayChart = New System.Windows.Forms.Button()
         Me.cbDaysinchart = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.Button2 = New System.Windows.Forms.Button()
+        Me.btnEnterOrder = New System.Windows.Forms.Button()
         Me.btnStartDate = New System.Windows.Forms.Button()
         Me.txtStartDate = New System.Windows.Forms.TextBox()
         Me.txtEndDate = New System.Windows.Forms.TextBox()
@@ -71,6 +71,8 @@ Partial Class frmMain
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AxTws1 = New AxTWSLib.AxTws()
         Me.lblWarning = New System.Windows.Forms.Label()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.lblAccountNum = New System.Windows.Forms.Label()
         CType(Me.chtEquity, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dsAccountBalance, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AccountNetLiq, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -170,12 +172,13 @@ Partial Class frmMain
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView1.Location = New System.Drawing.Point(887, 12)
         Me.DataGridView1.Name = "DataGridView1"
-        Me.DataGridView1.Size = New System.Drawing.Size(164, 96)
+        Me.DataGridView1.Size = New System.Drawing.Size(164, 51)
         Me.DataGridView1.TabIndex = 7
+        Me.DataGridView1.Visible = False
         '
         'btnStartAccSummary
         '
-        Me.btnStartAccSummary.Location = New System.Drawing.Point(770, 130)
+        Me.btnStartAccSummary.Location = New System.Drawing.Point(861, 82)
         Me.btnStartAccSummary.Name = "btnStartAccSummary"
         Me.btnStartAccSummary.Size = New System.Drawing.Size(122, 31)
         Me.btnStartAccSummary.TabIndex = 8
@@ -188,12 +191,13 @@ Partial Class frmMain
         '
         'btnAccUpdate
         '
-        Me.btnAccUpdate.Location = New System.Drawing.Point(974, 540)
+        Me.btnAccUpdate.Location = New System.Drawing.Point(1057, 548)
         Me.btnAccUpdate.Name = "btnAccUpdate"
         Me.btnAccUpdate.Size = New System.Drawing.Size(111, 29)
         Me.btnAccUpdate.TabIndex = 9
         Me.btnAccUpdate.Text = "Start Acc Update"
         Me.btnAccUpdate.UseVisualStyleBackColor = True
+        Me.btnAccUpdate.Visible = False
         '
         'tmrAccUpdate
         '
@@ -201,19 +205,20 @@ Partial Class frmMain
         '
         'btnIntradayChart
         '
-        Me.btnIntradayChart.Location = New System.Drawing.Point(762, 613)
+        Me.btnIntradayChart.Location = New System.Drawing.Point(1073, 597)
         Me.btnIntradayChart.Name = "btnIntradayChart"
         Me.btnIntradayChart.Size = New System.Drawing.Size(86, 23)
         Me.btnIntradayChart.TabIndex = 10
         Me.btnIntradayChart.Text = "IntraDay Chart"
         Me.btnIntradayChart.UseVisualStyleBackColor = True
+        Me.btnIntradayChart.Visible = False
         '
         'cbDaysinchart
         '
         Me.cbDaysinchart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbDaysinchart.FormattingEnabled = True
         Me.cbDaysinchart.Items.AddRange(New Object() {"1", "2", "3", "4", "5"})
-        Me.cbDaysinchart.Location = New System.Drawing.Point(955, 136)
+        Me.cbDaysinchart.Location = New System.Drawing.Point(999, 92)
         Me.cbDaysinchart.Name = "cbDaysinchart"
         Me.cbDaysinchart.Size = New System.Drawing.Size(121, 21)
         Me.cbDaysinchart.TabIndex = 11
@@ -221,24 +226,25 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(971, 120)
+        Me.Label1.Location = New System.Drawing.Point(1018, 76)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(70, 13)
         Me.Label1.TabIndex = 12
         Me.Label1.Text = "Days in Chart"
         '
-        'Button2
+        'btnEnterOrder
         '
-        Me.Button2.Location = New System.Drawing.Point(1010, 515)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(75, 23)
-        Me.Button2.TabIndex = 13
-        Me.Button2.Text = "Button2"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.btnEnterOrder.Location = New System.Drawing.Point(1084, 515)
+        Me.btnEnterOrder.Name = "btnEnterOrder"
+        Me.btnEnterOrder.Size = New System.Drawing.Size(75, 23)
+        Me.btnEnterOrder.TabIndex = 13
+        Me.btnEnterOrder.Text = "Button2"
+        Me.btnEnterOrder.UseVisualStyleBackColor = True
+        Me.btnEnterOrder.Visible = False
         '
         'btnStartDate
         '
-        Me.btnStartDate.Location = New System.Drawing.Point(762, 586)
+        Me.btnStartDate.Location = New System.Drawing.Point(763, 613)
         Me.btnStartDate.Name = "btnStartDate"
         Me.btnStartDate.Size = New System.Drawing.Size(85, 23)
         Me.btnStartDate.TabIndex = 14
@@ -247,21 +253,21 @@ Partial Class frmMain
         '
         'txtStartDate
         '
-        Me.txtStartDate.Location = New System.Drawing.Point(762, 560)
+        Me.txtStartDate.Location = New System.Drawing.Point(762, 586)
         Me.txtStartDate.Name = "txtStartDate"
         Me.txtStartDate.Size = New System.Drawing.Size(85, 20)
         Me.txtStartDate.TabIndex = 15
         '
         'txtEndDate
         '
-        Me.txtEndDate.Location = New System.Drawing.Point(868, 560)
+        Me.txtEndDate.Location = New System.Drawing.Point(868, 587)
         Me.txtEndDate.Name = "txtEndDate"
         Me.txtEndDate.Size = New System.Drawing.Size(86, 20)
         Me.txtEndDate.TabIndex = 16
         '
         'btnEndDate
         '
-        Me.btnEndDate.Location = New System.Drawing.Point(868, 586)
+        Me.btnEndDate.Location = New System.Drawing.Point(869, 613)
         Me.btnEndDate.Name = "btnEndDate"
         Me.btnEndDate.Size = New System.Drawing.Size(86, 23)
         Me.btnEndDate.TabIndex = 17
@@ -280,22 +286,22 @@ Partial Class frmMain
         '
         'RectangleShape1
         '
-        Me.RectangleShape1.Location = New System.Drawing.Point(742, 548)
+        Me.RectangleShape1.Location = New System.Drawing.Point(742, 574)
         Me.RectangleShape1.Name = "RectangleShape1"
-        Me.RectangleShape1.Size = New System.Drawing.Size(221, 104)
+        Me.RectangleShape1.Size = New System.Drawing.Size(225, 104)
         '
         'btnOpenChart
         '
-        Me.btnOpenChart.Location = New System.Drawing.Point(1013, 486)
+        Me.btnOpenChart.Location = New System.Drawing.Point(762, 643)
         Me.btnOpenChart.Name = "btnOpenChart"
-        Me.btnOpenChart.Size = New System.Drawing.Size(75, 23)
+        Me.btnOpenChart.Size = New System.Drawing.Size(86, 23)
         Me.btnOpenChart.TabIndex = 19
-        Me.btnOpenChart.Text = "Open Chart"
+        Me.btnOpenChart.Text = "Intraday Chart"
         Me.btnOpenChart.UseVisualStyleBackColor = True
         '
         'btnDailyChart
         '
-        Me.btnDailyChart.Location = New System.Drawing.Point(868, 613)
+        Me.btnDailyChart.Location = New System.Drawing.Point(869, 643)
         Me.btnDailyChart.Name = "btnDailyChart"
         Me.btnDailyChart.Size = New System.Drawing.Size(85, 23)
         Me.btnDailyChart.TabIndex = 20
@@ -309,13 +315,13 @@ Partial Class frmMain
         Legend2.Enabled = False
         Legend2.Name = "Legend1"
         Me.chtPctEquity.Legends.Add(Legend2)
-        Me.chtPctEquity.Location = New System.Drawing.Point(770, 163)
+        Me.chtPctEquity.Location = New System.Drawing.Point(774, 137)
         Me.chtPctEquity.Name = "chtPctEquity"
         Series2.ChartArea = "ChartArea1"
         Series2.Legend = "Legend1"
         Series2.Name = "Series1"
         Me.chtPctEquity.Series.Add(Series2)
-        Me.chtPctEquity.Size = New System.Drawing.Size(346, 287)
+        Me.chtPctEquity.Size = New System.Drawing.Size(346, 343)
         Me.chtPctEquity.TabIndex = 21
         Me.chtPctEquity.Text = "Percent Equity"
         '
@@ -374,8 +380,9 @@ Partial Class frmMain
         Me.dgPercent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgPercent.Location = New System.Drawing.Point(1057, 12)
         Me.dgPercent.Name = "dgPercent"
-        Me.dgPercent.Size = New System.Drawing.Size(121, 95)
+        Me.dgPercent.Size = New System.Drawing.Size(121, 51)
         Me.dgPercent.TabIndex = 27
+        Me.dgPercent.Visible = False
         '
         'MenuStrip1
         '
@@ -408,7 +415,7 @@ Partial Class frmMain
         'AxTws1
         '
         Me.AxTws1.Enabled = True
-        Me.AxTws1.Location = New System.Drawing.Point(553, 519)
+        Me.AxTws1.Location = New System.Drawing.Point(999, 586)
         Me.AxTws1.Name = "AxTws1"
         Me.AxTws1.OcxState = CType(resources.GetObject("AxTws1.OcxState"), System.Windows.Forms.AxHost.State)
         Me.AxTws1.Size = New System.Drawing.Size(100, 50)
@@ -425,11 +432,31 @@ Partial Class frmMain
         Me.lblWarning.TabIndex = 30
         Me.lblWarning.Text = "Label Warning"
         '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(568, 60)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(50, 13)
+        Me.Label5.TabIndex = 31
+        Me.Label5.Text = "Account:"
+        '
+        'lblAccountNum
+        '
+        Me.lblAccountNum.AutoSize = True
+        Me.lblAccountNum.Location = New System.Drawing.Point(789, 60)
+        Me.lblAccountNum.Name = "lblAccountNum"
+        Me.lblAccountNum.Size = New System.Drawing.Size(39, 13)
+        Me.lblAccountNum.TabIndex = 32
+        Me.lblAccountNum.Text = "Label6"
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1182, 693)
+        Me.Controls.Add(Me.lblAccountNum)
+        Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.lblWarning)
         Me.Controls.Add(Me.AxTws1)
         Me.Controls.Add(Me.dgPercent)
@@ -445,7 +472,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.txtEndDate)
         Me.Controls.Add(Me.txtStartDate)
         Me.Controls.Add(Me.btnStartDate)
-        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.btnEnterOrder)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.cbDaysinchart)
         Me.Controls.Add(Me.btnIntradayChart)
@@ -496,7 +523,7 @@ Partial Class frmMain
     Friend WithEvents btnIntradayChart As System.Windows.Forms.Button
     Friend WithEvents cbDaysinchart As System.Windows.Forms.ComboBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents Button2 As System.Windows.Forms.Button
+    Friend WithEvents btnEnterOrder As System.Windows.Forms.Button
     Friend WithEvents btnStartDate As System.Windows.Forms.Button
     Friend WithEvents txtStartDate As System.Windows.Forms.TextBox
     Friend WithEvents txtEndDate As System.Windows.Forms.TextBox
@@ -518,5 +545,7 @@ Partial Class frmMain
     Friend WithEvents HelpToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents AboutToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents lblWarning As System.Windows.Forms.Label
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents lblAccountNum As System.Windows.Forms.Label
 
 End Class

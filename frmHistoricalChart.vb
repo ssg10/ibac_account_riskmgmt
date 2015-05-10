@@ -61,8 +61,14 @@ Public Class frmHistoricalChart
                     'Console.WriteLine(currentField)
                     currentDate = currentRow(0)
                     equity = currentRow(1)
-                    'Next
-                    dtAccEquity.Rows.Add({currentDate, equity})  ' Parms take array
+                    'Next, if date is in between selected dates, put it in data table for plotting into chart
+                    If (DateTime.Compare(CDate(currentDate).Date, CDate(frmMain.txtStartDate.Text).Date) >= 0) And
+                            (DateTime.Compare(CDate(currentDate).Date, CDate(frmMain.txtEndDate.Text).Date) <= 0) Then
+
+                        dtAccEquity.Rows.Add({currentDate, equity})  ' Parms take array
+
+                    End If
+
                 Catch ex As Microsoft.VisualBasic.
                             FileIO.MalformedLineException
                     MsgBox("Line " & ex.Message &

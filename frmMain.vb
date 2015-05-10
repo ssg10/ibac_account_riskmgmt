@@ -13,18 +13,19 @@ Public Class frmMain
     Dim g_write_once_per_run As Boolean = True
     Dim g_write_daily_data_once As Boolean = False
     Dim g_starting_equity As Double = 0
-    Public g_pct_equity_up_threshold_alert As Decimal = 10
-    Dim g_pct_equity_down_threshold_alert As Decimal = 10
+    Public g_pct_equity_up_threshold_alert As Decimal = 8
+    Public g_pct_equity_down_threshold_alert As Decimal = 8
+    Dim g_user_has_setting As Boolean
 
 
-    'Dim MARKET_OPEN_TIME As DateTime = #6:30:00 AM#
-    'Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 PM#
+    Dim MARKET_OPEN_TIME As DateTime = #6:30:00 AM#
+    Dim MARKET_CLOSE_TIME As DateTime = #1:00:00 PM#
     
     ' Dim g_returned_calendar_date As DateTime
 
     'For test
-    Dim MARKET_OPEN_TIME As DateTime = #11:00:00 PM#
-    Dim MARKET_CLOSE_TIME As DateTime = #11:59:00 PM#
+    'Dim MARKET_OPEN_TIME As DateTime = #11:00:00 PM#
+    'Dim MARKET_CLOSE_TIME As DateTime = #11:59:00 PM#
 
 
     Dim IBCONNECTION_NUMBER As Integer = 7 ' Must be unique number or IB will not connect us
@@ -66,16 +67,6 @@ Public Class frmMain
     Private Sub btnConnect_Click(sender As Object, e As EventArgs) Handles btnConnect.Click
         g_connecting_inprogress = True
         Call AxTws1.connect("", "7496", IBCONNECTION_NUMBER)
-
-        'code below, because TWS does not return market data farm status anymore!!!!!!!!!!!!!
-        'Wait for errMsg event with "Market data farm ", if string contains that, connection is good
-        'btnConnect.Enabled = False
-        'btnDisconnect.Enabled = True
-        'lblConnected.Text = "CONNECTED"
-        'lblConnected.BackColor = Color.Green
-        'Call AxTws1.reqCurrentTime()
-        ' Just a flag to let this if then executed once
-        'g_connecting_inprogress = False
     End Sub
 
     Private Sub btnDisconnect_Click(sender As Object, e As EventArgs) Handles btnDisconnect.Click
@@ -435,6 +426,12 @@ Public Class frmMain
 
     End Sub
 
+    Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+
+
+
+    End Sub
+
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         lblWarning.Text = Now.Date
 
@@ -482,6 +479,12 @@ Public Class frmMain
         End If
 
         txtEndDate.Text = Now.Date
+        txtStartDate.Text = Now.AddDays(-5).Date
+
+        AccessSettingFile("read")
+
+        lblAccountNum.Text = g_accounts(0)
+
     End Sub
 
     Private Sub AxTws1_accountDownloadEnd(sender As Object, e As AxTWSLib._DTwsEvents_accountDownloadEndEvent) Handles AxTws1.accountDownloadEnd
@@ -489,11 +492,6 @@ Public Class frmMain
     End Sub
 
 
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        AxTws1.reqCurrentTime()
-
-
-    End Sub
 
     Private Sub btnStartDate_Click(sender As Object, e As EventArgs) Handles btnStartDate.Click
         calendar.ShowDialog()
@@ -555,20 +553,24 @@ Public Class frmMain
     End Sub
 
     Sub PlayWarningSound(warningtype As String)
+        Try
+            Select Case warningtype
 
-        Select Case warningtype
+                Case "up"
+                    My.Computer.Audio.Play("C:\dailyprofithit.wav",
+                        AudioPlayMode.WaitToComplete)
+                Case "down"
+                    My.Computer.Audio.Play("C:\dailystopexceeds.wav",
+                        AudioPlayMode.WaitToComplete)
 
-            Case "up"
-                My.Computer.Audio.Play("C:\dailyprofithit.wav",
-                    AudioPlayMode.WaitToComplete)
-            Case "down"
-                My.Computer.Audio.Play("C:\dailystopexceeds.wav",
-                    AudioPlayMode.WaitToComplete)
+            End Select
 
-        End Select
+            My.Computer.Audio.Stop()
+        Catch ex As Exception
 
-        My.Computer.Audio.Stop()
+            MessageBox.Show(ex.ToString)
 
+        End Try
     End Sub
 
     Sub PlayAsteriskSound()
@@ -611,7 +613,71 @@ Public Class frmMain
             PopulateEquityDataTable = -1
         End Try
 
+        'Return no error
         PopulateEquityDataTable = 0
     End Function
 
+    Public Function AccessSettingFile(action As String) As Decimal
+        'Load program and user settings from file
+        ' File Structure:
+        '     ibac_settings.txt
+        '     <account number>
+        '     <equity threshold high>
+        '     <equity threshold low>
+        '     <user has done init setup>
+
+        Dim filename = "c:\ibac_settings.txt"
+
+        Try
+            If action = "read" Then
+                Dim lines() As String = IO.File.ReadAllLines(filename)
+
+
+                'Using sr As StreamReader = New StreamReader(filename)
+                'While Not sr.EndOfStream
+                'Dim data As String = sr.ReadLine
+
+                For line As Integer = 0 To lines.Length - 1
+                    lbErrorAndLog.Items.Add("Read Settings index = " & line.ToString)
+                    lbErrorAndLog.Items.Add(lines(line))
+                    lbErrorAndLog.TopIndex = lbErrorAndLog.Items.Count - 1
+
+                    Select Case line
+
+                        Case 0
+                            g_accounts(0) = lines(line)
+                        Case 1
+                            g_pct_equity_up_threshold_alert = lines(line)
+                        Case 2
+                            g_pct_equity_down_threshold_alert = lines(line)
+
+                    End Select
+
+                Next
+
+                'End While
+                'End Using
+
+            ElseIf action = "write" Then
+                g_pct_equity_up_threshold_alert = frmSettings.pct_equity_up_threshold_alert()
+                g_pct_equity_down_threshold_alert = frmSettings.pct_equity_down_threshold_alert()
+                g_accounts(0) = frmSettings.account_num()
+
+
+                Using accFile As StreamWriter = New StreamWriter(filename, False)
+                    accFile.WriteLine(g_accounts(0))
+                    accFile.WriteLine(g_pct_equity_up_threshold_alert)
+                    accFile.WriteLine(g_pct_equity_down_threshold_alert)
+                End Using
+
+            End If
+        Catch
+            MsgBox("This is the first time you use the software. Let us configure the settings first")
+            frmSettings.Show()
+
+        End Try
+
+        AccessSettingFile = 0
+
+    End Function
 End Class
