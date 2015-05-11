@@ -10,3 +10,5 @@ The same applies if certain loss threshold is violated, then it prompts traders 
 
 Other features to be added is to auto close positions based on traders' settings and individual position analysis, such as 
 percent gain/loss and alert traders to actively take profit/cut loss.
+
+![alt tag](https://raw.github.com/ssg10/ibac_account_riskmgmt/blob/master/IBac%20picture.png)
