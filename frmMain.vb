@@ -53,10 +53,13 @@ Public Class frmMain
             If e.errorMsg.Contains(connection_msg) Then
                 lblConnected.Text = "CONNECTED"
                 lblConnected.BackColor = Color.Green
-                Call AxTws1.reqCurrentTime()
+
+                'Run servertime timer
+                tmrServerTime.Enabled = True
 
                 btnConnect.Enabled = False
                 btnDisconnect.Enabled = True
+
             End If
 
             ' Just a flag to let this if then executed once
@@ -76,6 +79,8 @@ Public Class frmMain
 
         btnConnect.Enabled = True
         btnDisconnect.Enabled = False
+
+        tmrServerTime.Enabled = False
     End Sub
 
     Private Sub btnStartAccSummary_Click(sender As Object, e As EventArgs) Handles btnStartAccSummary.Click
@@ -403,7 +408,6 @@ Public Class frmMain
 
             DataGridView1.DataSource = dtAccEquity.DefaultView
 
-
             chtEquity.DataSource = dtAccEquity
             chtEquity.DataBind()
 
@@ -426,11 +430,6 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-
-
-
-    End Sub
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         lblWarning.Text = Now.Date
@@ -579,7 +578,9 @@ Public Class frmMain
     End Sub
 
     Private Sub AxTws1_currentTime(sender As Object, e As AxTWSLib._DTwsEvents_currentTimeEvent) Handles AxTws1.currentTime
+        Dim servertime As DateTime = ConvertTimestamp(e.time)
 
+        lblServerTime.Text = servertime.TimeOfDay.ToString
     End Sub
 
     Private Function PopulateEquityDataTable(num_days As Decimal) As Integer
@@ -679,5 +680,14 @@ Public Class frmMain
 
         AccessSettingFile = 0
 
+    End Function
+
+    Private Sub tmrServerTime_Tick(sender As Object, e As EventArgs) Handles tmrServerTime.Tick
+        AxTws1.reqCurrentTime()
+
+    End Sub
+
+    Function ConvertTimestamp(ByVal timestamp As Double) As DateTime
+        Return New DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(timestamp).ToLocalTime
     End Function
 End Class

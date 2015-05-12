@@ -73,6 +73,8 @@ Partial Class frmMain
         Me.lblWarning = New System.Windows.Forms.Label()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.lblAccountNum = New System.Windows.Forms.Label()
+        Me.lblServerTime = New System.Windows.Forms.Label()
+        Me.tmrServerTime = New System.Windows.Forms.Timer(Me.components)
         CType(Me.chtEquity, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dsAccountBalance, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AccountNetLiq, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -113,9 +115,9 @@ Partial Class frmMain
         '
         'btnDisconnect
         '
-        Me.btnDisconnect.Location = New System.Drawing.Point(155, 36)
+        Me.btnDisconnect.Location = New System.Drawing.Point(154, 33)
         Me.btnDisconnect.Name = "btnDisconnect"
-        Me.btnDisconnect.Size = New System.Drawing.Size(115, 27)
+        Me.btnDisconnect.Size = New System.Drawing.Size(115, 30)
         Me.btnDisconnect.TabIndex = 4
         Me.btnDisconnect.Text = "Disconnect"
         Me.btnDisconnect.UseVisualStyleBackColor = True
@@ -170,7 +172,7 @@ Partial Class frmMain
         'DataGridView1
         '
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView1.Location = New System.Drawing.Point(887, 12)
+        Me.DataGridView1.Location = New System.Drawing.Point(1117, 137)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.Size = New System.Drawing.Size(164, 51)
         Me.DataGridView1.TabIndex = 7
@@ -178,9 +180,9 @@ Partial Class frmMain
         '
         'btnStartAccSummary
         '
-        Me.btnStartAccSummary.Location = New System.Drawing.Point(861, 82)
+        Me.btnStartAccSummary.Location = New System.Drawing.Point(893, 88)
         Me.btnStartAccSummary.Name = "btnStartAccSummary"
-        Me.btnStartAccSummary.Size = New System.Drawing.Size(122, 31)
+        Me.btnStartAccSummary.Size = New System.Drawing.Size(122, 30)
         Me.btnStartAccSummary.TabIndex = 8
         Me.btnStartAccSummary.Text = "Start Acc Summary"
         Me.btnStartAccSummary.UseVisualStyleBackColor = True
@@ -218,7 +220,7 @@ Partial Class frmMain
         Me.cbDaysinchart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbDaysinchart.FormattingEnabled = True
         Me.cbDaysinchart.Items.AddRange(New Object() {"1", "2", "3", "4", "5"})
-        Me.cbDaysinchart.Location = New System.Drawing.Point(999, 92)
+        Me.cbDaysinchart.Location = New System.Drawing.Point(1021, 88)
         Me.cbDaysinchart.Name = "cbDaysinchart"
         Me.cbDaysinchart.Size = New System.Drawing.Size(121, 21)
         Me.cbDaysinchart.TabIndex = 11
@@ -226,7 +228,7 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(1018, 76)
+        Me.Label1.Location = New System.Drawing.Point(1018, 72)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(70, 13)
         Me.Label1.TabIndex = 12
@@ -435,26 +437,42 @@ Partial Class frmMain
         'Label5
         '
         Me.Label5.AutoSize = True
+        Me.Label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label5.Location = New System.Drawing.Point(568, 60)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(50, 13)
+        Me.Label5.Size = New System.Drawing.Size(58, 13)
         Me.Label5.TabIndex = 31
         Me.Label5.Text = "Account:"
         '
         'lblAccountNum
         '
         Me.lblAccountNum.AutoSize = True
+        Me.lblAccountNum.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblAccountNum.Location = New System.Drawing.Point(789, 60)
         Me.lblAccountNum.Name = "lblAccountNum"
-        Me.lblAccountNum.Size = New System.Drawing.Size(39, 13)
+        Me.lblAccountNum.Size = New System.Drawing.Size(45, 13)
         Me.lblAccountNum.TabIndex = 32
         Me.lblAccountNum.Text = "Label6"
+        '
+        'lblServerTime
+        '
+        Me.lblServerTime.AutoSize = True
+        Me.lblServerTime.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblServerTime.Location = New System.Drawing.Point(789, 88)
+        Me.lblServerTime.Name = "lblServerTime"
+        Me.lblServerTime.Size = New System.Drawing.Size(0, 13)
+        Me.lblServerTime.TabIndex = 33
+        '
+        'tmrServerTime
+        '
+        Me.tmrServerTime.Interval = 900
         '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1182, 693)
+        Me.Controls.Add(Me.lblServerTime)
         Me.Controls.Add(Me.lblAccountNum)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.lblWarning)
@@ -547,5 +565,7 @@ Partial Class frmMain
     Friend WithEvents lblWarning As System.Windows.Forms.Label
     Friend WithEvents Label5 As System.Windows.Forms.Label
     Friend WithEvents lblAccountNum As System.Windows.Forms.Label
+    Friend WithEvents lblServerTime As System.Windows.Forms.Label
+    Friend WithEvents tmrServerTime As System.Windows.Forms.Timer
 
 End Class
